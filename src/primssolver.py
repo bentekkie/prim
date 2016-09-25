@@ -1,4 +1,4 @@
-from tkinter import CURRENT, Tk, Canvas, Menu, StringVar, mainloop, filedialog, simpledialog
+from tkinter import CURRENT, Tk, Canvas, Menu, StringVar, mainloop, filedialog, simpledialog, Label, SUNKEN, BOTTOM
 import os
 
 from Lib import Node, Edge, saveall, PriorityQueue
@@ -15,8 +15,8 @@ def onCanvasClick(event):
     if variable.get() == "node":
         r = 50
         name = simpledialog.askstring("Node Name", "Enter Name:")
-        name = name.replace(" ", "_").replace("-", "~")
-        if name != None and len(name) > 0 and name not in names and "-" not in name:
+        if name != None and len(name) > 0 and name not in names:
+            name = name.replace(" ", "_").replace("-", "~")
             tagname = "-" + name
             names.append(name)
             event.widget.create_oval(
@@ -77,14 +77,19 @@ def load():
 def clearSelection():
     global selected
     w.itemconfig("node", fill="red")
+    refreshStatus()
     selected = []
+
+
+def refreshStatus():
+    status.config(text=variable.get().title() + " mode")
 
 
 def onObjectClick(event):
     global selected
     global variable
     if event.widget.find_withtag(CURRENT):
-        if variable.get() == "edges":
+        if variable.get() == "edge":
             if len(selected) == 0:
                 tags = event.widget.gettags(
                     event.widget.find_withtag(CURRENT)[0])
@@ -203,7 +208,8 @@ variable.set("node")
 modesMenu = Menu(menu)
 modesMenu.add_radiobutton(
     label="Node", var=variable, value="node", command=clearSelection)
-modesMenu.add_radiobutton(label="Edge", var=variable, value="edges")
+modesMenu.add_radiobutton(
+    label="Edge", var=variable, value="edge", command=refreshStatus)
 modesMenu.add_radiobutton(
     label="Delete", var=variable, value="delete", command=clearSelection)
 fileMenu = Menu(menu)
@@ -218,6 +224,9 @@ w.bind('<Button-1>', onCanvasClick)
 master.bind('<Escape>', onEscape)
 master.config(menu=menu)
 master.title("Prim's Algorithm")
+status = Label(master, text="", bd=1, relief=SUNKEN, anchor="w")
+status.pack(side=BOTTOM, fill="x")
+refreshStatus()
 
 
 mainloop()
