@@ -33,10 +33,10 @@ def onEscape(event):
 def save():
     items = {"nodes": {}, "edges": {}}
     for node in w.find_withtag("node"):
-        name, type = w.gettags(node)
+        name, _ = w.gettags(node)
         items["nodes"][name[1:]] = w.coords(node)
     for edge in w.find_withtag("edge"):
-        name, type = w.gettags(edge)
+        name, _ = w.gettags(edge)
         items["edges"][name[1:]] = [w.coords(edge), edges[name[1:]]]
     filename = filedialog.asksaveasfilename(
         filetypes=[("Text file", ".txt")], defaultextension=u".txt")
